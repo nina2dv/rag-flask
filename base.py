@@ -74,7 +74,6 @@ CORS(app, resources={r"/query": {"origins": ["http://localhost:3000", "http://12
 @app.route("/query", methods=["POST"], strict_slashes=False)
 @cross_origin() 
 def llm():
-    
     # return jsonify({'message': 'Test response'}) # For testing
     # try:
     #     # Your route logic
@@ -92,6 +91,18 @@ def llm():
     # except Exception as e:
     #     print(e)  # Log the error
     #     return jsonify({'error': 'An error occurred'}), 500
+
+    # Extract the token from the Authorization header
+    token = request.headers.get('Authorization')
+    #print(token)
+    
+    # Check if the token is present
+    if not token:
+        return jsonify({'error': 'Authorization token is missing!'}), 403
+
+    # Validate the token
+    if token != os.environ.get("AUTH_TOKEN"):
+        return jsonify({'error': 'Invalid token!'}), 403
 
     try:
         data = request.json
@@ -116,5 +127,5 @@ def llm():
    
 
 # Running app
-if __name__ == '__main__':
-    app.run(port=5000)
+# if __name__ == '__main__':
+#     app.run(port=5000)
